@@ -1,0 +1,49 @@
+package Worker;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import Queue.SQS;
+public class remoteWorker {
+	 public static void main(String arg[]) {
+		 SQS tasks=new SQS();
+		  runningsqs a=new runningsqs();
+		  String th=arg[0];
+		  long start,end=0;
+          int threads=0;
+        try{
+       	 threads=Integer.parseInt(th);
+        }
+        catch(Exception e)
+        {
+       	 System.out.println("Task is running on Remote Worker:");
+        }
+		  
+		  remoteThread f=new remoteThread();
+		  boolean flag=true;
+		 
+		  int j=tasks.sizeofsqs("Queue");
+	
+		  //a=tasks.get_first("Queue");
+		
+		  ExecutorService executor = Executors.newFixedThreadPool(threads);
+	     
+		  start=System.currentTimeMillis();
+		   while(j>0) {
+	           
+			   Runnable worker = new remoteThread();
+	            executor.execute(worker);
+	            j--;
+	   
+	             }     
+		   end=System.currentTimeMillis();
+		   
+	        executor.shutdown();
+	        while (!executor.isTerminated()) {
+	        }
+	        System.out.println("Finished all threads");
+	        System.out.println("Time:"+(end-start));
+	        
+	    }
+
+}

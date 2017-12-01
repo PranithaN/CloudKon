@@ -1,0 +1,65 @@
+package Worker;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import Scheduler.localQueue;
+
+public class localWorker {
+	
+	 thread f=new thread();
+	 localQueue input;
+	 int thread;
+	  int j,s;
+	 localQueue result;
+	 public localWorker(localQueue input,int th){
+		 this.input=input;
+		 thread=th;
+		 result= new localQueue();
+		
+	 }
+	 public int work(){
+		
+		
+	 ExecutorService executor = Executors.newFixedThreadPool(thread);
+	 j=input.getsize();
+	 System.out.println("Task is running on Local Worker:"); 
+	 int t=0;
+	 System.out.println(j);
+		   for (int i = 0; i < j; i++) {
+			 
+			   String s=input.delete(i); 
+			  
+			   int time = Integer.parseInt(s.split(" ")[1]);
+			   
+			   
+			   {
+				   if(time==t){
+					   Runnable worker = new thread(s,i);
+						  executor.execute(worker);
+						  //System.out.println("Task sleep"+time+"is done");
+				  //System.out.println(i);
+				   }
+				   else{
+					  
+					   t=time;
+					   Runnable worker = new thread(s,i);
+						  executor.execute(worker);
+						  //System.out.println(i);
+				   }
+			   }
+
+	          }
+	
+	        executor.shutdown();
+	        while (!executor.isTerminated()) {
+	        }
+	        System.out.println("Finished all threads");
+	       
+	        result=f.getresult();
+	        result.showqueue();
+	        //System.out.println(result.getsize());
+	        return result.getsize();
+	    }
+	 
+
+}

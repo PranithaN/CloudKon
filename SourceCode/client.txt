@@ -1,0 +1,201 @@
+package Client;
+
+
+import java.awt.List;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
+
+import Queue.SQS;
+import Queue.localQueue;
+import Worker.localWorker;
+
+/**
+ * Trivial client for the date server.
+ */
+public class client {
+	static localQueue queue;
+	static SQS sqs;
+	static localWorker lwk;
+
+	  public static void main(String[] args) throws Exception {
+			String version=args[2];
+			 queue=new localQueue();
+		 String num=args[0];
+			String filename=args[1];
+		      int threads=0;
+		      ArrayList<String> tasks=new ArrayList<String>();
+	         try{
+	        	 threads=Integer.parseInt(num);
+	         }
+	         catch(Exception e)
+	         {
+	        	 System.out.println("Task is runnig on Remote Worker....");
+	         }
+	         ObjectInputStream in;
+	        
+	         BufferedReader br = null;
+	 		try {
+	 			br = new BufferedReader(new FileReader(filename));
+	 		} catch (FileNotFoundException e) {
+	 			// TODO Auto-generated catch block
+	 			e.printStackTrace();
+	 		}
+	        String sl=" ";
+	        String task="";
+	        int i=0;
+	        int s=0;
+	      
+	        
+	        while(sl!=null)
+	        {
+	        	sl=br.readLine();
+	        	tasks.add(sl);}
+	      	 try {
+	      		
+
+	         if(version.equals("lw")){
+	        	for(int s2=0;s2<tasks.size();s2++){
+	   		      int t=Integer.parseInt(tasks.get(s).split(" ")[1]);
+
+	          if(t==0){
+	    	 for(int a=0;a<100000;a++){
+	    		queue.insert(tasks.get(s),i);
+	    	  i++;
+	    	  }
+	    	 System.out.println("client is done"); 
+	    	task(t,"lw",threads);
+	    	tasks.remove(s2);
+	     }
+		     else if(t==10){
+		    	 for(int a=0;a<1000;a++){
+			    	  queue.insert(tasks.get(s), i);
+			    	 i++;
+			    	  }
+		    	
+		    	 System.out.println("client is done"); 
+		    	task(t,"lw",threads);
+		    	tasks.remove(s2);
+		    	
+		    	
+		     }
+	     else if(t==100){
+	    	 for(int a=0;a<100;a++){
+		    	  queue.insert(tasks.get(s), i);
+		    	  i++;
+		    	  }
+	    	 System.out.println("client is done"); 
+	    	task(t,"lw",threads);
+	    	tasks.remove(s2);
+	     }
+	     else if(t==1000){
+	    	 for(int a=0;a<100;a++){
+		    	  queue.insert(tasks.get(s), i);
+		    	  i++;
+		    	  }
+	    	 System.out.println("client is done"); 
+	    	task(t,"lw",threads);
+	    	tasks.remove(s2);
+	     }
+	     else if(t==10000){
+	    	 for(int a=0;a<10;a++){
+		    	  queue.insert(tasks.get(s), i);
+		    	  i++;
+		    	  }
+	    	 System.out.println("client is done"); 
+	    	task(t,"lw",threads);
+	    	tasks.remove(s2);
+	     }
+	     else{
+	    	 
+	    	i=0;
+	    	 queue.insert(tasks.get(s), i);
+	    	 i++;
+	    	System.out.println(tasks.get(s));
+	    	task(t,"lw",threads);
+	    	tasks.remove(s2);
+	     }
+         
+	         }
+	        
+	         }
+         
+	 		else if(version.equals("rw"))
+	 		{
+	 			for(int s2=0;s2<tasks.size();s2++){
+			      int t=Integer.parseInt(tasks.get(s).split(" ")[1]);
+	 		sqs=new SQS();
+	 		System.out.println("add to sqs");	
+	 		if(t==0){
+	 			 for(int a=0;a<10000;a++){
+	      	        sqs.insert(tasks.get(s),"Queue");}
+	 			tasks.remove(s2);}
+	 		else if(t==10){
+	 			 for(int a=0;a<10;a++){
+	      	        sqs.insert(tasks.get(s),"Queue");}
+	 			tasks.remove(s2);}
+	 		else if(t==500){
+	 			 for(int a=0;a<500;a++){
+	      	        sqs.insert(tasks.get(s),"Queue");}
+	 			tasks.remove(s2);}
+	 		else if(t==1000){
+	 			 for(int a=0;a<100;a++){
+	      	        sqs.insert(tasks.get(s),"Queue");}
+	 			tasks.remove(s2);}
+	 		else if(t==10000){
+	 			 for(int a=0;a<10;a++){
+	      	        sqs.insert(tasks.get(s),"Queue");}
+	 			tasks.remove(s2);}
+	 		else{
+	 			sqs.insert(tasks.get(s),"Queue");
+	 			tasks.remove(s2);
+	 		}
+	      	   
+	      	}
+	 		
+	 		}
+	 		else{
+	 			sqs.insert(tasks.get(s), "Queue");
+	 		}
+	 		}
+				catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}}
+		       
+	         
+	  
+	  public static void task(int t,String v,int th) throws java.lang.NullPointerException{
+		  if(v.equals("lw"))
+          {int s;
+          int s1=0;
+          long start,end=0;
+              s=queue.getsize();
+              
+             
+             
+            	  start=System.currentTimeMillis();
+        	  lwk= new localWorker(queue, th);
+ 	         s1=lwk.work();
+ 	        end=System.currentTimeMillis();
+ 	       //System.out.println("result "+s1);  
+ 	        System.out.println("Time taken "+(end-start));  
+ 	         
+          }
+          else
+          {
+        	  System.out.println("Client has sent the messages to the SQS");   
+          }
+	  }
+
+    }
+       

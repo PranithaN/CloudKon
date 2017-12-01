@@ -1,0 +1,170 @@
+package Queue;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.AmazonSQSClient;
+import com.amazonaws.services.sqs.model.CreateQueueRequest;
+import com.amazonaws.services.sqs.model.DeleteMessageRequest;
+import com.amazonaws.services.sqs.model.DeleteQueueRequest;
+import com.amazonaws.services.sqs.model.GetQueueAttributesRequest;
+import com.amazonaws.services.sqs.model.Message;
+import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
+import com.amazonaws.services.sqs.model.SendMessageRequest;
+
+import Worker.runningsqs;
+
+public class SQS {
+
+	String myQueueUrl;
+	AmazonSQS sqs;
+	BasicAWSCredentials credentials = new BasicAWSCredentials("AKIAJ6AHA7V4SB5RXHBA", "q6+aogB3NL22KgXGn7afIo1PapDSAmbetIpdUV6b");
+	CreateQueueRequest createQueueRequest;
+	public SQS()
+	{
+
+		sqs = new AmazonSQSClient(credentials);
+	    createQueueRequest = new CreateQueueRequest("MyQueue");
+        myQueueUrl = sqs.createQueue(createQueueRequest).getQueueUrl();
+        Region usWest2 = Region.getRegion(Regions.US_WEST_2);
+        sqs.setRegion(usWest2);
+
+	}
+	
+    public void insert(String tasks,String name) throws Exception {    	
+  
+   try {
+            CreateQueueRequest createQueueRequest = new CreateQueueRequest(name);
+            myQueueUrl = sqs.createQueue(createQueueRequest).getQueueUrl();   
+            sqs.sendMessage(new SendMessageRequest(myQueueUrl, tasks));
+
+        } catch (AmazonServiceException ase) {
+            System.out.println("Caught an AmazonServiceException, which means your request made it " +
+                    "to Amazon SQS, but was rejected with an error response for some reason.");
+              } catch (AmazonClientException ace) {
+            System.out.println("Caught an AmazonClientException, which means the client encountered " +
+                    "a serious internal problem while trying to communicate with SQS, such as not " +
+                    "being able to access the network.");
+            System.out.println("Error Message: " + ace.getMessage());
+        }
+    }
+
+public runningsqs get(String name)    
+{  
+	runningsqs a=new runningsqs();
+	System.out.print("Receiving:");
+
+try {
+ 
+} catch (Exception e) {}
+	  sqs = new AmazonSQSClient(credentials);
+  Region usWest2 = Region.getRegion(Regions.US_WEST_2);
+  sqs.setRegion(usWest2);
+try {
+    CreateQueueRequest createQueueRequest = new CreateQueueRequest(name);
+    myQueueUrl = sqs.createQueue(createQueueRequest).getQueueUrl();
+
+} catch (AmazonServiceException ase) {
+    System.out.println("Caught an AmazonServiceException, which means your request made it " +
+            "to Amazon SQS, but was rejected with an error response for some reason.");
+      } catch (AmazonClientException ace) {
+    System.out.println("Caught an AmazonClientException, which means the client encountered " +
+            "a serious internal problem while trying to communicate with SQS, such as not " +
+            "being able to access the network.");
+    System.out.println("Error Message: " + ace.getMessage());
+}
+ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(myQueueUrl);
+List<Message> messages = sqs.receiveMessage(receiveMessageRequest).getMessages();
+for (Message message : messages) {
+    System.out.println("  Message");
+
+}
+
+	if(messages.size()>0)
+	{
+	     System.out.println("Deleting a message from SQS\n");
+         CreateQueueRequest createQueueRequest = new CreateQueueRequest("MyQueue1");
+         String messageRecieptHandle = messages.get(0).getReceiptHandle();
+         sqs.deleteMessage(new DeleteMessageRequest(myQueueUrl, messageRecieptHandle));
+	}
+	else{
+		a.task="0";
+		a.taskid="0";		
+	}
+	return a;
+}
+
+public void delete(String name)
+{
+	  System.out.println("Receiving messages from Queue.\n");
+
+	  try {
+	 //    
+	  } catch (Exception e) {}
+	  	  sqs = new AmazonSQSClient(credentials);
+	    Region usWest2 = Region.getRegion(Regions.US_WEST_2);
+	    sqs.setRegion(usWest2);
+	  try {
+	      CreateQueueRequest createQueueRequest = new CreateQueueRequest(name);
+	      myQueueUrl = sqs.createQueue(createQueueRequest).getQueueUrl();
+	
+
+	  } catch (AmazonServiceException ase) {
+	      System.out.println("Caught an AmazonServiceException, which means your request made it " +
+	              "to Amazon SQS, but was rejected with an error response for some reason.");
+	        } catch (AmazonClientException ace) {
+	      System.out.println("Caught an AmazonClientException, which means the client encountered " +
+	              "a serious internal problem while trying to communicate with SQS, such as not " +
+	              "being able to access the network.");
+	      System.out.println("Error Message: " + ace.getMessage());
+	  }	
+	  		  
+	          sqs.deleteQueue(new DeleteQueueRequest(myQueueUrl));
+
+}
+public int sizeofsqs(String name)
+{
+	  try {
+	   
+	  } catch (Exception e) {}
+	  	  sqs = new AmazonSQSClient(credentials);
+	    Region usWest2 = Region.getRegion(Regions.US_WEST_2);
+	    sqs.setRegion(usWest2);
+	  try {
+	      CreateQueueRequest createQueueRequest = new CreateQueueRequest(name);
+	      myQueueUrl = sqs.createQueue(createQueueRequest).getQueueUrl();
+	 
+
+	  } catch (AmazonServiceException ase) {
+	      System.out.println("Caught an AmazonServiceException, which means your request made it " +
+	              "to Amazon SQS, but was rejected with an error response for some reason.");
+	        } catch (AmazonClientException ace) {
+	      System.out.println("Caught an AmazonClientException, which means the client encountered " +
+	              "a serious internal problem while trying to communicate with SQS, such as not " +
+	              "being able to access the network.");
+	      System.out.println("Error Message: " + ace.getMessage());
+	  }	
+	  GetQueueAttributesRequest request = new GetQueueAttributesRequest();
+      request = request.withAttributeNames("ApproximateNoOfMessages");
+    
+       request = request.withQueueUrl(myQueueUrl);
+
+          Map<String, String> map = sqs.getQueueAttributes(request).getAttributes();
+
+        
+          int size = Integer.parseInt(map.get("ApproximateNoOfMessages"));
+
+          System.out.println("sizeOfMessages "+size);
+	
+	return size;
+	          	}
+}

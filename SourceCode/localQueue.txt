@@ -1,0 +1,33 @@
+package Scheduler;
+import java.util.HashMap;
+public class localQueue {
+	public HashMap<Integer,String> Tasks=new HashMap<Integer,String>();	
+	 
+	 public void insert(String s,int i)
+	 {
+		 Tasks.put(i, s);
+		 
+	 }
+ 
+	 public int getsize()
+	 {
+	   return Tasks.size();		 
+	 }
+   public void showqueue()
+   {for (int name: this.Tasks.keySet()){
+        
+       System.out.print("sleep"+name+":");
+       System.out.println(Tasks.get(name));
+   }  
+   	
+   }
+   public String delete(int key)
+   {       String s=this.Tasks.get(key);
+      
+       this.Tasks.remove(key); 
+       return s;
+      
+   }
+    	
+
+}

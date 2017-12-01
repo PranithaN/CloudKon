@@ -1,0 +1,51 @@
+package Worker;
+
+import Scheduler.localQueue;
+
+public class thread implements Runnable {
+	public static  localQueue result ;
+    private String command;
+            int k; 
+            static int m=0;
+    public thread()
+    {}
+    public thread(String s,int k){
+        this.command=s;
+        this.k=k;
+        result = new localQueue();
+    }
+   
+ 
+    @Override
+    public void run() {
+    //    System.out.println("Task #:"+key+" Start. Command = "+command);
+    	 m++;
+        int time = Integer.parseInt(command.split(" ")[1]);
+        processCommand(time);
+        result.insert("Task#:"+time+"->END", k);
+       
+       //System.out.println(k);
+        //System.out.println("Task #:"+key+" End.");
+    }
+ 
+    private void processCommand(int i) {
+        try {
+            Thread.sleep(i);
+            System.out.println("Sleep"+i+",Thread:"+Thread.currentThread());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public localQueue getresult()
+    {
+    	return this.result;
+    }
+    
+ 
+    @Override
+    public String toString(){
+        return this.command;
+    }
+
+}

@@ -1,0 +1,87 @@
+package Worker;
+
+import Queue.SQS;
+
+public class remoteThread implements Runnable{
+	AmazonDynamoDB ad=new AmazonDynamoDB();
+	runningsqs a=new runningsqs();
+	SQS tasks=new SQS();
+	SQS results=new SQS();
+	
+	private String command;
+	int d;
+            int key; 
+         static int m=0;
+    public remoteThread(){
+    //    this.command=s;
+     //   this.key=key;
+    }
+ 
+    @Override
+    public void run() {
+    try {
+		ad.init();
+	} catch (Exception e2) {
+		// TODO Auto-generated catch block
+		e2.printStackTrace();
+	}
+     a=tasks.get("Queue");
+    
+     try {
+    	 d=ad.duplicate(a.taskid);
+	} catch (Exception e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}
+     if(d==1)
+     { if(a.task.equals("0"))
+        {
+		   m++;
+		
+    	  System.out.println("stop.");
+           }
+          else{  
+          int time = Integer.parseInt(a.task.split(" ")[1]);
+            processCommand(time);
+          try {
+		    results.insert(a.taskid+"is Finished", "result");
+	       }   catch (Exception e) {
+		   // TODO Auto-generated catch block
+		   e.printStackTrace();
+	      }  
+           //result.insert("Task#:"+key+"->END", m);
+          m++;
+        System.out.println("Task #:"+a.taskid+" End.");
+           
+        }
+     }     
+ else
+    {if(a.taskid.equals("0"))
+    {
+	   m++;
+	  
+	  System.out.println("stop.");
+       }
+      else{  
+    	  System.out.println("duplicate::"+a.taskid);} 
+       
+    }
+	
+     
+    }
+     
+     
+ 
+    private void processCommand(int i) {
+        try {
+            Thread.sleep(i);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public String toString(){
+        return this.command;
+    }
+}
+
