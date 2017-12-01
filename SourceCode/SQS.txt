@@ -27,7 +27,7 @@ public class SQS {
 
 	String myQueueUrl;
 	AmazonSQS sqs;
-	BasicAWSCredentials credentials = new BasicAWSCredentials("AKIAJ6AHA7V4SB5RXHBA", "q6+aogB3NL22KgXGn7afIo1PapDSAmbetIpdUV6b");
+	BasicAWSCredentials credentials = new BasicAWSCredentials(" ");
 	CreateQueueRequest createQueueRequest;
 	public SQS()
 	{
