@@ -35,19 +35,6 @@ import com.amazonaws.services.dynamodbv2.util.Tables;
 public class AmazonDynamoDB {
 
 
-
-	 /*
-     * Before running the code:
-     *      Fill in your AWS access credentials in the provided credentials
-     *      file template, and be sure to move the file to the default location
-     *      (C:\\Users\\Prani\\.aws\\credentials) where the sample code will load the
-     *      credentials from.
-     *      https://console.aws.amazon.com/iam/home?#security_credential
-     *
-     * WARNING:
-     *      To avoid accidental leakage of your credentials, DO NOT keep
-     *      the credentials file in your source directory.
-     */
     static AmazonDynamoDBClient dynamoDB;
     static String tableName = "Duplicate";
  
@@ -68,10 +55,10 @@ public class AmazonDynamoDB {
         /*
          * The ProfileCredentialsProvider will return your [default]
          * credential profile by reading from the credentials file located at
-         * (C:\\Users\\Prani\\.aws\\credentials).
+         * (C:\\Users\\user\\.aws\\credentials).
          */
        // AWSCredentials credentials = null;
-    	BasicAWSCredentials credentials = new BasicAWSCredentials("AKIAJ6AHA7V4SB5RXHBA", "q6+aogB3NL22KgXGn7afIo1PapDSAmbetIpdUV6b");
+    	BasicAWSCredentials credentials = new BasicAWSCredentials("api");
         try {
             //credentials = new ProfileCredentialsProvider("default").getCredentials();
         } catch (Exception e) {
